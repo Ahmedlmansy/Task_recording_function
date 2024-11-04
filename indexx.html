@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task recording function</title>
+    <link rel="stylesheet" href="main.css" />
+  </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    .add-task-all {
+      flex-direction: column;
+      align-content: center;
+      margin-top: 30px;
+    }
+
+    .add-task-all,
+    form {
+      margin: 10px;
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+    }
+
+    form {
+      background-color: #eee;
+      justify-content: space-around !important;
+      border-radius: 5px;
+    }
+    form input {
+      border: none;
+      outline: none;
+      height: 30px;
+      width: 75%;
+      border-radius: 5px;
+      padding: 5px;
+    }
+    .btn-add,
+    .btn-dle {
+      background-color: red;
+      color: #fff;
+      padding: 5px;
+      border: none;
+      border-radius: 5px;
+      transition: 0.5s;
+      cursor: pointer;
+    }
+    .btn-add:hover,
+    .btn-dle:hover {
+      background-color: rgb(232, 1, 1);
+    }
+    .showTask {
+      margin: 10px;
+      padding: 15px 25px;
+      border-radius: 5px;
+    }
+    .tasks {
+      display: flex;
+    }
+
+    .showTask .tasks {
+      justify-content: space-between;
+      flex-direction: column;
+      background-color: #eee;
+      padding: 12px 20px;
+      border-radius: 5px;
+      margin: 12px 0;
+    }
+    .showTask {
+      background-color: #eee;
+    }
+    .showTask p {
+      font-size: 24px;
+    }
+
+    .divContent {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      background: #fff;
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+    @media (max-width: 700px) {
+    }
+  </style>
+  <body>
+    <div class="add-task-all">
+      <form id="myForm" action="">
+        <input type="text" name="" id="inputAdd" />
+        <input
+          type="submit"
+          style="width: 12%; display: block; margin-top: 5px"
+          class="btn-add"
+          value="Add Task"
+        />
+      </form>
+      <div class="showTask">
+        <div class="tasks"></div>
+      </div>
+    </div>
+    <script>
+      let form = document.getElementById("myForm");
+      let inputAdd = document.getElementById("inputAdd");
+      let tasksContainer = document.querySelector(".tasks");
+
+      // 1 create a array or get the localStorge Item
+      let arrayData = JSON.parse(localStorage.getItem("Tasks")) || [];
+
+      // show tasks in reloda page
+      displayTasks();
+
+      //  function add task in array
+      form.onsubmit = function (e) {
+        e.preventDefault();
+        let theValue = inputAdd.value.trim();
+        if (theValue !== "") {
+          let newTask = {
+            id: Date.now(),
+            title: theValue,
+          };
+          arrayData.push(newTask);
+          localStorage.setItem("Tasks", JSON.stringify(arrayData));
+          inputAdd.value = "";
+          displayTasks();
+        } else {
+          alert("يرجى إدخال قيمة صالحة");
+        }
+      };
+
+      // function displayTasks
+      function displayTasks() {
+        tasksContainer.innerHTML = "";
+        arrayData.forEach((task) => {
+          // create the div and p
+          let div = document.createElement("div");
+          div.className = "divContent";
+
+          let pTask = document.createElement("p");
+          pTask.id = task.id;
+          pTask.textContent = task.title;
+
+          let btnDel = document.createElement("button");
+          btnDel.textContent = "Delete";
+          btnDel.className = "btn-dle";
+          btnDel.onclick = () => deleteTask(task.id);
+
+          // Append in the master Div
+          div.appendChild(pTask);
+          div.appendChild(btnDel);
+          tasksContainer.appendChild(div);
+        });
+      }
+
+      // function deleteTask
+      function deleteTask(id) {
+        //
+        arrayData = arrayData.filter((task) => task.id !== id);
+        localStorage.setItem("Tasks", JSON.stringify(arrayData));
+        displayTasks();
+      }
+    </script>
+  </body>
+</html>
